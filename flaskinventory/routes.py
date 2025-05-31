@@ -29,6 +29,15 @@ def product():
     location_list += loc_choices
     form.prodlocation.choices = location_list
     
+    # Get initial warehouse information for each product
+    for product in details:
+        # Check if product has a balance entry
+        balance = Balance.query.filter_by(product=product.prod_name).first()
+        if balance:
+            product.initial_location = balance.location
+        else:
+            product.initial_location = 'Warehouse'
+    
     if exists== False and request.method == 'GET' :
             flash(f'Add products to view','info')
     elif eform.validate_on_submit() and request.method == 'POST':
