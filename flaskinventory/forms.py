@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired,NumberRange
 class addproduct(FlaskForm):
     prodname = StringField('Product Name', validators=[DataRequired()])
     prodqty = IntegerField('Quantity', validators=[NumberRange(min=5, max=1000000),DataRequired()])
-    prodlocation = SelectField('Initial Location')
+    # Remove the prodlocation field
     prodsubmit = SubmitField('Save Changes')
 
 class editproduct(FlaskForm):
