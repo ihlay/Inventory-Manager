@@ -180,7 +180,7 @@ def check(frm,to,name,qty):
         if(a=='None'):#if not
             return 'no prod'
 
-        elif (bl.quantity - 100) > qty:
+        elif bl.quantity >= qty:  # FIXED: Changed from (bl.quantity - 100) > qty to bl.quantity >= qty
            #if from qty is sufficiently large, check to  in Balance
             bal = Balance.query.filter_by(location=to,product=name).first()
             a = str(bal)
