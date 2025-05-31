@@ -61,10 +61,10 @@ def product():
         return render_template('product.html',title = 'Products',details=details,eform=eform)
 
     elif form.validate_on_submit() :
-        product = Product(prod_name=form.prodname.data, prod_qty=form.prodqty.data)
-        db.session.add(product)
-        
         try:
+            # First create the product
+            product = Product(prod_name=form.prodname.data, prod_qty=form.prodqty.data)
+            db.session.add(product)
             db.session.commit()
             
             # If location is not Warehouse, create a Balance entry for the product at the selected location
@@ -94,9 +94,13 @@ def product():
                 
             flash(f'Your product {form.prodname.data} has been added!', 'success')
             return redirect(url_for('product'))
-        except IntegrityError :
+        except IntegrityError:
             db.session.rollback()
             flash(f'This product already exists','danger')
+            return redirect('/Product')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}','danger')
             return redirect('/Product')
     return render_template('product.html',title = 'Products',eform=eform,form = form,details=details)
 
