@@ -25,6 +25,7 @@
          <th>ID</th>
          <th>Product Name</th>
          <th>Unallocated Quantity</th>
+         <th>Initial Warehouse</th>
          <th>Actions</th>
          <th></th>
        </tr>
@@ -35,6 +36,7 @@
          <td>{{d.prod_id}}</td>
          <td>{{d.prod_name}}</td>
          <td>{{d.prod_qty}}</td>
+         <td>{{d.initial_location|default('Warehouse')}}</td>
          <td>
              <button type="button" class="btn btn-edit" data-toggle="modal" data-target = "#edit{{d.prod_id}}" >
              <span class="btn-icon"><i class="glyphicon glyphicon-pencil"></i></span>Edit</button>
