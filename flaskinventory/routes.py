@@ -121,15 +121,16 @@ def move():
     pdetails = Product.query.all()
     exists = bool(Movement.query.all())
     if exists== False and request.method == 'GET' :
-            flash(f'Transfer products  to view','info')
+            flash(f'Transfer products to view','info')
     #----------------------------------------------------------
     prod_choices = Product.query.with_entities(Product.prod_name,Product.prod_name).all()
     loc_choices = Location.query.with_entities(Location.loc_name,Location.loc_name).all()
     prod_list_names = []
-    src_list_names,dest_list_names=[('Warehouse','Warehouse')],[('Warehouse','Warehouse')]
-    prod_list_names+=prod_choices
-    src_list_names+=loc_choices
-    dest_list_names+=loc_choices
+    # Remove Warehouse from default options
+    src_list_names, dest_list_names = [], []
+    prod_list_names += prod_choices
+    src_list_names += loc_choices
+    dest_list_names += loc_choices
     #passing list_names to the form for select field
     form.mprodname.choices = prod_list_names
     form.src.choices = src_list_names
