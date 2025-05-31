@@ -23,7 +23,11 @@ def product():
     details = Product.query.all()
     exists = bool(Product.query.all())
     
-    # Remove the location choices population for the form
+    # Populate location choices for the form
+    loc_choices = Location.query.with_entities(Location.loc_name, Location.loc_name).all()
+    location_list = [('Warehouse', 'Warehouse')]
+    location_list += loc_choices
+    form.prodlocation.choices = location_list
     
     # Get initial warehouse information for each product
     for product in details:
@@ -62,6 +66,32 @@ def product():
         
         try:
             db.session.commit()
+            
+            # If location is not Warehouse, create a Balance entry for the product at the selected location
+            if form.prodlocation.data != 'Warehouse':
+                # Reduce quantity from Warehouse (Product table)
+                product.prod_qty = 0  # Set to 0 since all products are allocated to the location
+                
+                # Add to Balance for the selected location
+                new_balance = Balance(
+                    product=form.prodname.data,
+                    location=form.prodlocation.data,
+                    quantity=form.prodqty.data
+                )
+                db.session.add(new_balance)
+                
+                # Create a movement record
+                timestamp = datetime.utcnow()
+                movement = Movement(
+                    ts=timestamp,
+                    frm='Warehouse',
+                    to=form.prodlocation.data,
+                    pname=form.prodname.data,
+                    pqty=form.prodqty.data
+                )
+                db.session.add(movement)
+                db.session.commit()
+                
             flash(f'Your product {form.prodname.data} has been added!', 'success')
             return redirect(url_for('product'))
         except IntegrityError :
