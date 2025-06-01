@@ -277,3 +277,15 @@ def delete():
         flash(f'Your location  has been deleted!', 'success')
         return redirect(url_for('loc'))
         return render_template('loc.html',title = 'Locations')
+
+
+@app.route("/get_product_location/<product_name>", methods=['GET'])
+def get_product_location(product_name):
+    # Check if product has a balance entry
+    balance = Balance.query.filter_by(product=product_name).first()
+    if balance:
+        location = balance.location
+    else:
+        location = 'Warehouse'
+    
+    return jsonify({'location': location})
