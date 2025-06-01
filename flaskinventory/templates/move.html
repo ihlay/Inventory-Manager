@@ -95,4 +95,30 @@
 </div>
 
 
+<!-- Add this script at the end of the file, before the {% endblock content %} -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('prod').querySelector('select');
+    const sourceSelect = document.getElementById('from').querySelector('select');
+    
+    productSelect.addEventListener('change', function() {
+      const selectedProduct = this.value;
+      if (selectedProduct) {
+        // Clear current options
+        sourceSelect.innerHTML = '';
+        
+        // Make an AJAX request to get the initial location
+        fetch(`/get_product_location/${selectedProduct}`)
+          .then(response => response.json())
+          .then(data => {
+            // Add the initial location as the only option
+            const option = document.createElement('option');
+            option.value = data.location;
+            option.textContent = data.location;
+            sourceSelect.appendChild(option);
+          });
+      }
+    });
+  });
+</script>
 {% endblock content %}
