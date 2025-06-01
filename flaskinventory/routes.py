@@ -162,14 +162,27 @@ def move():
     prod_choices = Product.query.with_entities(Product.prod_name,Product.prod_name).all()
     loc_choices = Location.query.with_entities(Location.loc_name,Location.loc_name).all()
     prod_list_names = []
-    src_list_names,dest_list_names=[('Warehouse','Warehouse')],[('Warehouse','Warehouse')]
-    prod_list_names+=prod_choices
-    src_list_names+=loc_choices
-    dest_list_names+=loc_choices
-    #passing list_names to the form for select field
+    
+    # Initialize empty lists for source and destination
+    src_list_names = []
+    dest_list_names = [('', 'Select Destination')]
+    
+    # Add product choices
+    prod_list_names += prod_choices
+    
+    # Add location choices to destination only
+    dest_list_names += [('Warehouse', 'Warehouse')]
+    dest_list_names += loc_choices
+    
+    # Set source based on product's initial location
     form.mprodname.choices = prod_list_names
-    form.src.choices = src_list_names
     form.destination.choices = dest_list_names
+    
+    # Dynamic source location based on selected product
+    # Default to empty until product is selected
+    src_list_names = [('', 'Select Product First')]
+    form.src.choices = src_list_names
+    
     #--------------------------------------------------------------
     #send to db
     if form.validate_on_submit() and request.method == 'POST' :
