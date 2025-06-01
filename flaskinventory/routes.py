@@ -2,7 +2,8 @@ from flask import  render_template,url_for,redirect,flash,request,jsonify
 from flaskinventory import app,db
 from flaskinventory.forms import addproduct,addlocation,moveproduct,editproduct,editlocation
 from flaskinventory.models import Location,Product,Movement,Balance
-import time,datetime
+import time
+from datetime import datetime  # Changed this line to import datetime class directly
 from sqlalchemy.exc import IntegrityError
 
 
