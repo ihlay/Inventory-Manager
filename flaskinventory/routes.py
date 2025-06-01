@@ -71,7 +71,8 @@ def product():
             # If location is not Warehouse, create a Balance entry for the product at the selected location
             if form.prodlocation.data != 'Warehouse':
                 # Reduce quantity from Warehouse (Product table)
-                product.prod_qty = 0  # Set to 0 since all products are allocated to the location
+                # product.prod_qty = 0  # Set to 0 since all products are allocated to the location
+                # Keep the original quantity in the Product table
                 
                 # Add to Balance for the selected location
                 new_balance = Balance(
