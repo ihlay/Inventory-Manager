@@ -40,11 +40,12 @@
             {{form.mprodname(class="form-control form-control-lg")}}
           </div>
 
-          <div id="from">
+          <!-- Hidden fields for source and destination -->
+          <div id="from" style="display: none;">
           {{form.src.label(class="form-control-label")}}<br>
           {{form.src(class="form-control form-control-lg")}}
           </div>
-          <div id="to">
+          <div id="to" style="display: none;">
           {{form.destination.label(class="form-control-label")}}<br>
           {{form.destination(class="form-control form-control-lg")}}
           </div>
@@ -95,30 +96,5 @@
 </div>
 
 
-<!-- Add this script at the end of the file, before the {% endblock content %} -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const productSelect = document.getElementById('prod').querySelector('select');
-    const sourceSelect = document.getElementById('from').querySelector('select');
-    
-    productSelect.addEventListener('change', function() {
-      const selectedProduct = this.value;
-      if (selectedProduct) {
-        // Clear current options
-        sourceSelect.innerHTML = '';
-        
-        // Make an AJAX request to get the initial location
-        fetch(`/get_product_location/${selectedProduct}`)
-          .then(response => response.json())
-          .then(data => {
-            // Add the initial location as the only option
-            const option = document.createElement('option');
-            option.value = data.location;
-            option.textContent = data.location;
-            sourceSelect.appendChild(option);
-          });
-      }
-    });
-  });
 </script>
 {% endblock %}
