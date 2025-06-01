@@ -187,7 +187,7 @@ def move():
     #send to db
     if form.validate_on_submit() and request.method == 'POST' :
 
-        timestamp = datetime.datetime.now()
+        timestamp = datetime.now()
         boolbeans = check(form.src.data,form.destination.data,form.mprodname.data,form.mprodqty.data)
         if boolbeans == False:
             flash(f'Retry with lower quantity than source location', 'danger')
