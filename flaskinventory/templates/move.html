@@ -94,6 +94,35 @@
 
 </div>
 
-
+<script>
+  // When the document loads, set up the product selection handler
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the product dropdown and source field
+    const productSelect = document.getElementById('mprodname');
+    const sourceField = document.getElementById('src');
+    
+    // When a product is selected
+    productSelect.addEventListener('change', function() {
+      const productName = this.value;
+      
+      // If a product is selected, fetch its location
+      if (productName) {
+        fetch(`/get_product_location/${productName}`)
+          .then(response => response.json())
+          .then(data => {
+            // Update the source field with the product's location
+            // First clear existing options
+            sourceField.innerHTML = '';
+            
+            // Add the new option
+            const option = document.createElement('option');
+            option.value = data.location;
+            option.textContent = data.location;
+            sourceField.appendChild(option);
+          });
+      }
+    });
+  });
 </script>
+
 {% endblock %}
