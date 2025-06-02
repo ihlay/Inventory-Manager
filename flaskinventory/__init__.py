@@ -7,6 +7,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
 from flaskinventory import routes
+from flaskinventory.api import api
+
+# Register the API blueprint
+app.register_blueprint(api, url_prefix='/api')
 
 with app.app_context():
     db.create_all()
