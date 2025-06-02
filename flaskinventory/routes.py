@@ -154,11 +154,13 @@ def move():
     form = moveproduct()
 
     details = Movement.query.all()
+    # Filter to only include products that exist in the Product table
     pdetails = Product.query.all()
     exists = bool(Movement.query.all())
     if exists== False and request.method == 'GET' :
             flash(f'Transfer products  to view','info')
     #----------------------------------------------------------
+    # Only include products that exist in the Product table
     prod_choices = Product.query.with_entities(Product.prod_name,Product.prod_name).all()
     loc_choices = Location.query.with_entities(Location.loc_name,Location.loc_name).all()
     prod_list_names = []
@@ -279,16 +281,19 @@ def delete():
     type = request.args.get('type')
     if type == 'product':
         pid = request.args.get('p_id')
-        product = Product.query.filter_by(prod_id=pid).delete()
+        product_name = Product.query.filter_by(prod_id=pid).first().prod_name
+        # Delete from Balance table first to maintain referential integrity
+        Balance.query.filter_by(product=product_name).delete()
+        # Then delete the product
+        Product.query.filter_by(prod_id=pid).delete()
         db.session.commit()
-        flash(f'Your product  has been deleted!', 'success')
+        flash(f'Your product has been deleted!', 'success')
         return redirect(url_for('product'))
-        return render_template('product.html',title = 'Products')
     else:
         pid = request.args.get('p_id')
         loc = Location.query.filter_by(loc_id = pid).delete()
         db.session.commit()
-        flash(f'Your location  has been deleted!', 'success')
+        flash(f'Your location has been deleted!', 'success')
         return redirect(url_for('loc'))
         return render_template('loc.html',title = 'Locations')
 
@@ -303,3 +308,20 @@ def get_product_location(product_name):
         location = 'Warehouse'
     
     return jsonify({'location': location})
+
+
+@app.route("/get_product_quantity/<product_name>", methods=['GET'])
+def get_product_quantity(product_name):
+    # Check if product has a balance entry
+    balance = Balance.query.filter_by(product=product_name).first()
+    if balance:
+        quantity = balance.quantity
+    else:
+        # If product is not in Balance table, get quantity from Product table
+        product = Product.query.filter_by(prod_name=product_name).first()
+        if product:
+            quantity = product.prod_qty
+        else:
+            quantity = 0
+    
+    return jsonify({'quantity': quantity})
