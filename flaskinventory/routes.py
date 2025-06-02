@@ -174,13 +174,25 @@ def move():
     dest_list_names += [('Warehouse', 'Warehouse')]
     dest_list_names += loc_choices
     
-    # Set source based on product's initial location
+    # Set choices for product name and destination
     form.mprodname.choices = prod_list_names
     form.destination.choices = dest_list_names
     
-    # Dynamic source location based on selected product
-    # Default to empty until product is selected
-    src_list_names = [('', 'Select Product First')]
+    # Set source location based on product's current location
+    # If no product is selected yet, show a default message
+    if request.method == 'POST' and form.mprodname.data:
+        # Get the product's current location
+        balance = Balance.query.filter_by(product=form.mprodname.data).first()
+        if balance:
+            # If product is in a specific location, set that as source
+            src_list_names = [(balance.location, balance.location)]
+        else:
+            # If product is not in Balance table, it's in Warehouse
+            src_list_names = [('Warehouse', 'Warehouse')]
+    else:
+        # Default when no product is selected
+        src_list_names = [('', 'Select Product First')]
+    
     form.src.choices = src_list_names
     
     #--------------------------------------------------------------
@@ -220,6 +232,7 @@ def check(frm,to,name,qty):
             else:
                 bal.quantity += qty
             db.session.commit()
+            return True  # Added explicit return for success case
         else :
             return False
     elif to == 'Warehouse' and frm != 'Warehouse':
@@ -233,6 +246,7 @@ def check(frm,to,name,qty):
                 prodq.prod_qty = prodq.prod_qty + qty
                 bal.quantity -= qty
                 db.session.commit()
+                return True  # Added explicit return for success case
             else :
                  return False
 
