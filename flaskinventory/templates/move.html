@@ -32,29 +32,31 @@
         </button>
       </div>
       <div class="modal-body">
-        <form  action="" method="post">
+        <form action="" method="post">
           {{ form.csrf_token() }}
 
             {{form.mprodname.label(class="form-control-label")}}<br>
-              <div id="prod">
-            {{form.mprodname(class="form-control form-control-lg")}}
-          </div>
+            <div id="prod">
+              {{form.mprodname(class="form-control form-control-lg")}}
+            </div>
 
-          <!-- Hidden fields for source and destination -->
-          <div style="display:none;">
-            {{form.src.label(class="form-control-label")}}
-            {{form.src(class="form-control form-control-lg")}}
+            <!-- Show source field (From) -->
+            <div>
+              {{form.src.label(class="form-control-label")}}<br>
+              {{form.src(class="form-control form-control-lg", readonly=true)}}
+            </div>
             
-            {{form.destination.label(class="form-control-label")}}
-            {{form.destination(class="form-control form-control-lg")}}
-          </div>
+            <!-- Show destination field (To) -->
+            <div>
+              {{form.destination.label(class="form-control-label")}}<br>
+              {{form.destination(class="form-control form-control-lg")}}
+            </div>
 
             {{form.mprodqty.label(class="form-control-label")}}<br>
-          <div class="qty">
-            {{form.mprodqty(class="form-control form-control-lg") }}
+            <div class="qty">
+              {{form.mprodqty(class="form-control form-control-lg")}}
+            </div>
           </div>
-
-      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <div class="move" >
@@ -97,16 +99,22 @@
 <script>
   // When the document loads, set up the product selection handler
   document.addEventListener('DOMContentLoaded', function() {
-    // Get the product dropdown and source field
+    // Get the product dropdown, source field, and quantity field
     const productSelect = document.getElementById('mprodname');
     const sourceField = document.getElementById('src');
+    const quantityField = document.getElementById('mprodqty');
+    const destinationField = document.getElementById('destination');
+    
+    // Clear destination field on page load
+    destinationField.value = '';
     
     // When a product is selected
     productSelect.addEventListener('change', function() {
       const productName = this.value;
       
-      // If a product is selected, fetch its location
+      // If a product is selected, fetch its location and quantity
       if (productName) {
+        // Fetch product location
         fetch(`/get_product_location/${productName}`)
           .then(response => response.json())
           .then(data => {
@@ -119,6 +127,17 @@
             option.value = data.location;
             option.textContent = data.location;
             sourceField.appendChild(option);
+            
+            // Fetch product quantity
+            return fetch(`/get_product_quantity/${productName}`);
+          })
+          .then(response => response.json())
+          .then(data => {
+            // Update the quantity field with the product's available quantity
+            quantityField.value = data.quantity;
+          })
+          .catch(error => {
+            console.error('Error fetching product data:', error);
           });
       }
     });
