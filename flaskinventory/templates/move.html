@@ -41,13 +41,12 @@
           </div>
 
           <!-- Hidden fields for source and destination -->
-          <div id="from" style="display: none;">
-          {{form.src.label(class="form-control-label")}}<br>
-          {{form.src(class="form-control form-control-lg")}}
-          </div>
-          <div id="to" style="display: none;">
-          {{form.destination.label(class="form-control-label")}}<br>
-          {{form.destination(class="form-control form-control-lg")}}
+          <div style="display:none;">
+            {{form.src.label(class="form-control-label")}}
+            {{form.src(class="form-control form-control-lg")}}
+            
+            {{form.destination.label(class="form-control-label")}}
+            {{form.destination(class="form-control form-control-lg")}}
           </div>
 
             {{form.mprodqty.label(class="form-control-label")}}<br>
