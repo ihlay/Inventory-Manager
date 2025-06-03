@@ -1,86 +1,194 @@
-# Inventory-Manager
-An inventory management system using Flask
+Inventory Manager REST API
 
-## Getting Started
+A comprehensive REST API for managing product inventory with full CRUD operations, built with Flask and SQLAlchemy.
 
+Overview
+This API provides programmatic access to inventory management functionality, following RESTful principles with proper error handling, validation, and testing coverage.
 
-## Clone this repository and set your path to it's folder, to get it up and running on your local system.
+Quick Start
+Base URL
+http://localhost:5000/api
+Content Type
+All requests and responses use application/json
 
-```
-git clone https://github.com/marination/Inventory-Manager.git
-cd Inventory-Manager
-```
-## What to look for here?
-- [System Summary](#system-summary)
-- [Running the app](#running-the-app)
-- Features
-  1. [Adding Products and Locations](#adding-products-and-locations)
-  2. [Deleting Products and Locations](#deleting-products-and-locations)
-  3. [Moving Products](#moving-products)
-  4. [Editing Products and Locations](#editing-products-and-locations)
-- [Built Using](#built-using)
-- [License](#license)
-### Prerequisites
+API Reference
+Products
 
-To run this system you will need :
-
-- Python 3
-- Flask
-- SQLALCHEMY
-- WTForms
-
-Assuming you have Python, proceed to install the rest using the command below:
-
-```
-pip3 install -r requirements.txt
-```
-## System Summary
-
-This system is built to simulate a warehouse environment and handles balancing quantities over warehouses. It has 4 main views including *Overview*,*Products*,*Locations* and *Transfers*. **Products** and **Locations** let you add,edit and delete entries from the system. **Transfers** lets you move items into the central warehouse, out of the central warehouse; also to and from various locations.It also displays transfer history. **Overview** will display products,warehouses and their respective balanced quantities.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/products` | Get all products |
+| `GET` | `/products/{id}` | Get product by ID |
+| `POST` | `/products` | Create new product |
+| `PUT` | `/products/{id}` | Update existing product |
+| `DELETE` | `/products/{id}` | Delete product |
 
 
-## Running the app
-1) Set your current path to where the cloned folder is and run the file **run.py**
+Request/Response Format
+Product Object
 
-![starting_app](https://user-images.githubusercontent.com/25857446/56443542-c4926380-6312-11e9-98ac-42aa6830bf42.gif)
+json{
+  "id": 1,
+  "name": "Product Name",
+  "quantity": 100,
+  "location": "Warehouse"
+}
+Success Response
+json{
+  "success": true,
+  "data": { ... },
+  "message": "Operation completed successfully"
+}
+Error Response
+json{
+  "success": false,
+  "error": "Error description",
+  "code": 400
+}
+Usage Examples with Postman
+Get All Products
 
-2) Either copy paste the url as shown above into your browser **or** simply check into *localhost:5000/* as shown below. You will see the initial views of each page as no actions are performed.
+Method: GET
+URL: http://localhost:5000/api/products
+Headers: None required
+Body: None required
 
-![init_site](https://user-images.githubusercontent.com/25857446/56443683-500bf480-6313-11e9-9397-4ec93a34d29d.gif)
+Get Single Product
 
-## Features
+Method: GET
+URL: http://localhost:5000/api/products/1
+Headers: None required
+Body: None required
 
-### Adding Products and Locations
-Products require product name and quantity to be filled. Location only requires location name
+Create Product
 
+Method: POST
+URL: http://localhost:5000/api/products
+Headers:
 
-![adding](https://user-images.githubusercontent.com/25857446/56444083-e55bb880-6314-11e9-87de-8deabdc1c6a9.gif)
-
-
-### Deleting Products and Locations
-Deleting only requires a button click, although the transfers(if any) will remain in the history.
-
-
-![delete](https://user-images.githubusercontent.com/25857446/56444188-5307e480-6315-11e9-83d8-afaeda5d39ff.gif)
-
-
-### Moving products
-Here products can be moved to a location, from a location as well as to and from a location. Products need to initially be added to various locations from the central warehouse.
-
-![mvng](https://user-images.githubusercontent.com/25857446/56446389-04137c80-6320-11e9-9c68-041db8b00a19.gif)
-
-### Editing Products and Locations
-Change in product or loaction name creates changes in their names in the history and system overview.So, you can rectify a spelling error and still not loose any data.
+Content-Type: application/json
 
 
-![edit](https://user-images.githubusercontent.com/25857446/56446569-fb6f7600-6320-11e9-85e5-f67e6a454e26.gif)
+Body (raw JSON):
+json{
+  "name": "New Product",
+  "quantity": 50,
+  "location": "Warehouse A"
+}
+
+Update Product
+
+Method: PUT
+URL: http://localhost:5000/api/products/1
+Headers:
+
+Content-Type: application/json
 
 
-# Built using
-- Flask
-- SQLAlchemy
+Body (raw JSON):
+json{
+  "name": "Updated Product",
+  "quantity": 75
+}
+Partial Update (name only):
+json{
+  "name": "New Name Only"
+}
 
-# License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+Delete Product
 
+Method: DELETE
+URL: http://localhost:5000/api/products/1
+Headers: None required
+Body: None required
+
+Postman Setup Guide
+Creating a Collection
+
+Open Postman and click "Collections" in the sidebar
+Click the "+" button to create a new collection
+Name it "Inventory API"
+
+Adding Requests
+
+Click "Add request" in your collection
+Set the appropriate HTTP method (GET, POST, PUT, DELETE)
+Enter the URL from the examples above
+For POST/PUT requests:
+
+Go to the "Body" tab
+Select "raw" and choose "JSON" from dropdown
+Paste the JSON payload
+
+
+Click "Send" to execute the request
+
+Viewing Results
+
+Response data appears in the bottom panel
+Check the Status Code (200, 201, 400, etc.)
+View the Response Body for returned data
+Check Response Time and Size in the response details
+
+Validation Rules
+
+Name: Required, must be unique across all products
+Quantity: Required, minimum value of 5
+Location: Optional, defaults to "Warehouse" if not specified
+
+HTTP Status Codes
+CodeDescription200Success201Resource created400Bad request (validation error)404Resource not found409Conflict (duplicate name)500Internal server error
+Error Handling
+The API provides detailed error messages for common scenarios:
+
+Validation Errors: Missing required fields, invalid data types
+Business Logic Errors: Duplicate names, quantity below minimum
+Not Found: Attempting to access non-existent products
+Server Errors: Database connection issues, unexpected errors
+
+Testing
+Run the comprehensive test suite:
+bashpython -m pytest flaskinventory/test_api.py -v
+The test suite includes:
+
+All CRUD operations
+Validation scenarios
+Error conditions
+Edge cases
+100% code coverage
+
+Technical Details
+Architecture
+
+Framework: Flask with Blueprint organization
+Database: SQLAlchemy ORM
+Serialization: Native JSON handling
+Testing: pytest framework
+
+Security Notes
+
+Currently no authentication required
+Suitable for local development
+Production: Implement proper authentication and authorization
+
+Database Schema
+sqlCREATE TABLE products (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    quantity INTEGER NOT NULL CHECK(quantity >= 5),
+    location VARCHAR(100) DEFAULT 'Warehouse'
+);
+Development
+Prerequisites
+
+Python 3.7+
+Flask
+SQLAlchemy
+pytest (for testing)
+
+Installation
+bashpip install flask sqlalchemy pytest
+
+Running the API
+bashpython app.py
+The API will be available at http://localhost:5000/api
